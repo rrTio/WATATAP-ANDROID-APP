@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Watatap</string>
+    <string name="btn_ViewHistory">History</string>
+    <string name="btn_ViewCurrentData">Live Data</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_On">On</string>
+    <string name="btn_Off">Off</string>
+
+    <string name="txt_live_data_header">LIVE DATA</string>
+    <string name="txt_ph_level">pH Level</string>
+    <string name="txt_turbidity">Turbidity</string>
+    <string name="txt_water_consumption">Water   Consumption</string>
+    <string name="txt_water_level_threshold">Water Level Threshold</string>
+    <string name="txt_leakage_amount">Leakage Amount</string>
+    <string name="txt_liters">Liters</string>
+    <string name="btn_main_valve">Main Valve</string>
+    <string name="btn_overheadvalve">Overhead Valve</string>
+</resources>
