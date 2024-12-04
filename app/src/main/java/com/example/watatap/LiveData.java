@@ -1,7 +1,9 @@
 package com.example.watatap;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.os.Handler;
 import android.widget.Toast;
@@ -22,10 +24,11 @@ public class LiveData extends AppCompatActivity {
     String dbpath = Variables.DATABASE_URL_PATH;
     String postpath = Variables.VALVE_URL_PATH;
     String currentdata = Variables.CURRENT_DATA;
-    String valves = Variables.VALVES;
+    String valves = Variables.VALVES_DATA;
 
-    TextView txtv_phlevel, txtv_turbidity, txtv_waterconsumption, txtv_waterlevelthreshold, txtv_leakageamount, txtv_liters;
+    TextView txtv_phlevel, txtv_turbidity, txtv_waterconsumption, txtv_waterlevelthreshold, txtv_leakageamountA, txtv_leakageamountB, txtv_liters;
     AppCompatToggleButton tbtn_mainvalve, tbtn_overheadvalve;
+    Spinner sp_City, sp_Barangay;
 
     private Handler handler = new Handler();
     String get_url = http + "192.168.1.49" + dbpath + currentdata;
@@ -38,6 +41,7 @@ public class LiveData extends AppCompatActivity {
         }
     };
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -48,10 +52,13 @@ public class LiveData extends AppCompatActivity {
         txtv_turbidity = findViewById(R.id.txt_value_turbidity);
         txtv_waterconsumption = findViewById(R.id.txt_value_waterconsumption);
         txtv_waterlevelthreshold = findViewById(R.id.txt_value_waterlevelthreshold);
-        txtv_leakageamount = findViewById(R.id.txt_value_leakageamount);
+        txtv_leakageamountA = findViewById(R.id.txt_value_leakageamount_a);
+        txtv_leakageamountB = findViewById(R.id.txt_value_leakageamount_b);
         txtv_liters = findViewById(R.id.txt_value_liters);
         tbtn_mainvalve = findViewById(R.id.mainvalve_switch);
         tbtn_overheadvalve = findViewById(R.id.overheadvalve_switch);
+        sp_City = findViewById(R.id.sp_city);
+        sp_Barangay = findViewById(R.id.sp_barangay);
 
         // Set listeners for toggle button state changes
         tbtn_mainvalve.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -94,27 +101,21 @@ public class LiveData extends AppCompatActivity {
                         try {
                             String overheadvalve = response.getString("overheadvalve");
                             String mainvalve = response.getString("mainvalve");
-                            String leakageamount = response.getString("leakageamount");
+                            String leakageamountA = response.getString("leakageamount_a");
+                            String leakageamountB = response.getString("leakageamount_b");
                             String phlevel = response.getString("phlevel");
                             String turbidity = response.getString("turbidity");
                             String waterconsumption = response.getString("waterconsumption");
                             String waterlevelthreshold = response.getString("waterlevelthreshold");
                             String liters = response.getString("liters");
+                            String city = response.getString("cd_city");
+                            String barangay = response.getString("cd_barangay");
                             String createddate = response.getString("createddate");
-
-                            Log.d("VolleyResponse", "Overhead Valve: " + overheadvalve);
-                            Log.d("VolleyResponse", "Main Valve: " + mainvalve);
-                            Log.d("VolleyResponse", "Leakage Amount: " + leakageamount);
-                            Log.d("VolleyResponse", "pH Level: " + phlevel);
-                            Log.d("VolleyResponse", "Turbidity: " + turbidity);
-                            Log.d("VolleyResponse", "Water Consumption: " + waterconsumption);
-                            Log.d("VolleyResponse", "Water Level Threshold: " + waterlevelthreshold);
-                            Log.d("VolleyResponse", "Liters: " + liters);
-                            Log.d("VolleyResponse", "Created Date: " + createddate);
 
                             txtv_phlevel.setText(phlevel);
                             txtv_turbidity.setText(turbidity);
-                            txtv_leakageamount.setText(leakageamount);
+                            txtv_leakageamountA.setText(leakageamountA);
+                            txtv_leakageamountB.setText(leakageamountB);
                             txtv_waterconsumption.setText(waterconsumption);
                             txtv_waterlevelthreshold.setText(waterlevelthreshold);
                             txtv_liters.setText(liters);
@@ -168,7 +169,6 @@ public class LiveData extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // Create a POST request
         JsonObjectRequest postRequest = new JsonObjectRequest(
                 Request.Method.POST, url, payload,
                 new Response.Listener<JSONObject>() {
