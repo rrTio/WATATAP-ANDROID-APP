@@ -1,8 +1,12 @@
 package com.example.watatap;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.os.Handler;
@@ -12,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatToggleButton;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -21,33 +24,50 @@ import org.json.JSONObject;
 public class LiveData extends AppCompatActivity {
 
     String http = Variables.DATABASE_URL_HTTP;
-    String dbpath = Variables.DATABASE_URL_PATH;
-    String postpath = Variables.VALVE_URL_PATH;
-    String currentdata = Variables.CURRENT_DATA;
-    String valves = Variables.VALVES_DATA;
+    String ip = "192.168.1.49";
 
     TextView txtv_phlevel, txtv_turbidity, txtv_waterconsumption, txtv_waterlevelthreshold, txtv_leakageamountA, txtv_leakageamountB, txtv_liters;
     AppCompatToggleButton tbtn_mainvalve, tbtn_overheadvalve;
-    Spinner sp_City, sp_Barangay;
+    Button btn_back, btn_history;
+    Spinner sp_city, sp_barangay;
 
     private Handler handler = new Handler();
-    String get_url = http + "192.168.1.49" + dbpath + currentdata;
-    String post_url = http + "192.168.1.49" + postpath + valves;
-    private Runnable fetchDataRunnable = new Runnable() {
+    String get_url = http + ip + Variables.GETDATA_PATH + Variables.CURRENT_DATA;
+    String valvehandler_url = http + ip + Variables.API_PATH + Variables.VALVE_HANDLER;
+    String get_valve = http + ip + Variables.GETDATA_PATH + Variables.VALVES_DATA;
+    String thresholdhandler_url = http + ip + Variables.API_PATH + Variables.THRESHOLD_HANDLER;
+
+    private boolean isMainValveUserAction = true;
+    private boolean isOverheadValveUserAction = true;
+
+    public String mainvalvestat, overheadvalvestat;
+    private Runnable fetchDataRunnable = new Runnable()
+    {
         @Override
-        public void run() {
-            fetchData(get_url); // Call the method to fetch data
-            handler.postDelayed(this, 1000); // Schedule next fetch after 5 seconds
+        public void run()
+        {
+            fetchData(get_url);
+            handler.postDelayed(this, 1000);
+        }
+    };
+
+    private Runnable fetchValveDataRunnable = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            fetchValves(get_valve);
+            handler.postDelayed(this, 1000);
         }
     };
 
     @SuppressLint("MissingInflatedId")
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_data);
 
+        // Initialize views
         txtv_phlevel = findViewById(R.id.txt_value_phlevel);
         txtv_turbidity = findViewById(R.id.txt_value_turbidity);
         txtv_waterconsumption = findViewById(R.id.txt_value_waterconsumption);
@@ -57,139 +77,177 @@ public class LiveData extends AppCompatActivity {
         txtv_liters = findViewById(R.id.txt_value_liters);
         tbtn_mainvalve = findViewById(R.id.mainvalve_switch);
         tbtn_overheadvalve = findViewById(R.id.overheadvalve_switch);
-        sp_City = findViewById(R.id.sp_city);
-        sp_Barangay = findViewById(R.id.sp_barangay);
+        sp_city = findViewById(R.id.sp_city);
+        sp_barangay = findViewById(R.id.sp_barangay);
 
-        // Set listeners for toggle button state changes
+        btn_history = findViewById(R.id.btn_history);
+        btn_back = findViewById(R.id.btn_back);
+
         tbtn_mainvalve.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                Log.d("ToggleButton", "Main Valve is ON");
-                Toast.makeText(LiveData.this, "Main Valve Button is set to: ON", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.d("ToggleButton", "Main Valve is OFF");
-                Toast.makeText(LiveData.this, "Main Valve Button is set to: OFF", Toast.LENGTH_SHORT).show();
+            if (isMainValveUserAction) {
+                handleToggleChange("Main Valve", isChecked);
+                sendValveStateChange();
             }
-            sendValveStateChange(post_url);
         });
 
         tbtn_overheadvalve.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                Log.d("ToggleButton", "Overhead Valve is ON");
-                Toast.makeText(LiveData.this, "Overhead Valve Button is set to: ON", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.d("ToggleButton", "Overhead Valve is OFF");
-                Toast.makeText(LiveData.this, "Overhead Valve Button is set to: OFF", Toast.LENGTH_SHORT).show();
+            if (isOverheadValveUserAction) {
+                handleToggleChange("Overhead Valve", isChecked);
+                sendValveStateChange();
             }
-            sendValveStateChange(post_url);
+        });
+
+        btn_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openHistory();
+            }
+        });
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMenu();
+            }
         });
 
         handler.post(fetchDataRunnable);
+        handler.post(fetchValveDataRunnable);
     }
 
-    private void fetchData(String url) {
+    private void sendValveStateChange()
+    {
+        JSONObject payload = new JSONObject();
+        try
+        {
+            payload.put("mainvalve", tbtn_mainvalve.isChecked() ? "On" : "Off");
+            payload.put("overheadvalve", tbtn_overheadvalve.isChecked() ? "On" : "Off");
+            Log.d("Payload", "Payload: " + payload.toString());
+        }
+        catch (Exception e)
+        {
+            Log.e("JSONException", "Error creating JSON payload: " + e.getMessage());
+        }
+
+        JsonObjectRequest postRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                valvehandler_url,
+                payload,
+                response -> Log.d("APIResponse", "POST successful: " + response.toString()),
+                error -> {
+                    Log.e("VolleyError", "Error during POST request: " + error.getMessage());
+                    if (error.networkResponse != null)
+                    {
+                        String response = new String(error.networkResponse.data);
+                        Log.e("VolleyError", "Response: " + response);
+                    }
+                });
+
+        Volley.newRequestQueue(this).add(postRequest);
+    }
+
+    private void handleToggleChange(String valveName, boolean isChecked)
+    {
+        Log.d("ToggleButton", valveName + " is " + (isChecked ? "ON" : "OFF"));
+        Toast.makeText(LiveData.this, valveName + " Button is set to: " + (isChecked ? "ON" : "OFF"), Toast.LENGTH_SHORT).show();
+    }
+
+    private void fetchValves(String url)
+    {
+        Log.d("VALVEAPI", "Fetching data from URL: " + url);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response ->
+                {
+                    try {
+                        Log.d("RESPONSE", "Response Received: " + response.toString());
+                        mainvalvestat = response.optString("mainvalve");
+                        overheadvalvestat = response.optString("overheadvalve");
+
+                        // Prevent triggering listeners while updating UI
+                        if(response.optString("mainvalve").equals("On"))
+                        {
+                            tbtn_mainvalve.setChecked(true);
+                        }
+                        if(response.optString("mainvalve").equals("Off"))
+                        {
+                            tbtn_mainvalve.setChecked(false);
+                        }
+
+                        if(response.optString("overheadvalve").equals("On"))
+                        {
+                            tbtn_overheadvalve.setChecked(true);
+                        }
+                        if(response.optString("overheadvalve").equals("Off"))
+                        {
+                            tbtn_overheadvalve.setChecked(false);
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e("VolleyError", "Error parsing JSON: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    Log.e("VolleyError", "Error during GET request: " + error.getMessage());
+                    if (error.networkResponse != null) {
+                        String response = new String(error.networkResponse.data);
+                        Log.e("VolleyError", "Response: " + response);
+                    }
+                });
+        Volley.newRequestQueue(this).add(jsonObjectRequest);
+    }
+
+    private void fetchData(String url)
+    {
+        Log.d("APIRequest", "Fetching data from URL: " + url);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (response == null) {
-                            Log.e("VolleyError", "Received empty response.");
-                            return;
-                        }
+                response -> {
+                    try {
+                        Log.d("APIResponse", "Response received: " + response.toString());
 
-                        try {
-                            String overheadvalve = response.getString("overheadvalve");
-                            String mainvalve = response.getString("mainvalve");
-                            String leakageamountA = response.getString("leakageamount_a");
-                            String leakageamountB = response.getString("leakageamount_b");
-                            String phlevel = response.getString("phlevel");
-                            String turbidity = response.getString("turbidity");
-                            String waterconsumption = response.getString("waterconsumption");
-                            String waterlevelthreshold = response.getString("waterlevelthreshold");
-                            String liters = response.getString("liters");
-                            String city = response.getString("cd_city");
-                            String barangay = response.getString("cd_barangay");
-                            String createddate = response.getString("createddate");
+                        txtv_phlevel.setText(response.optString("phlevel", "N/A"));
+                        txtv_turbidity.setText(response.optString("turbidity", "N/A"));
+                        txtv_waterconsumption.setText(response.optString("waterconsumption", "N/A"));
+                        txtv_waterlevelthreshold.setText(response.optString("waterlevelthreshold", "N/A"));
+                        txtv_leakageamountA.setText(response.optString("leakageamount_a", "N/A"));
+                        txtv_leakageamountB.setText(response.optString("leakageamount_b", "N/A"));
+                        txtv_liters.setText(response.optString("liters", "N/A"));
 
-                            txtv_phlevel.setText(phlevel);
-                            txtv_turbidity.setText(turbidity);
-                            txtv_leakageamountA.setText(leakageamountA);
-                            txtv_leakageamountB.setText(leakageamountB);
-                            txtv_waterconsumption.setText(waterconsumption);
-                            txtv_waterlevelthreshold.setText(waterlevelthreshold);
-                            txtv_liters.setText(liters);
-
-                            if (mainvalve.equals("On")) {
-                                tbtn_mainvalve.setText(mainvalve);
-                                tbtn_mainvalve.setChecked(true);
-                            }
-                            if (mainvalve.equals("Off")) {
-                                tbtn_mainvalve.setText(mainvalve);
-                                tbtn_mainvalve.setChecked(false);
-                            }
-                            if (overheadvalve.equals("On")) {
-                                tbtn_overheadvalve.setText(overheadvalve);
-                                tbtn_overheadvalve.setChecked(true);
-                            }
-                            if (overheadvalve.equals("Off")) {
-                                tbtn_overheadvalve.setText(overheadvalve);
-                                tbtn_overheadvalve.setChecked(false);
-                            }
-
-                        } catch (Exception e) {
-                            Log.e("VolleyError", "Error parsing JSON: " + e.getMessage());
-                            e.printStackTrace();
-                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e("VolleyError", "Error parsing JSON: " + e.getMessage());
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(com.android.volley.VolleyError error) {
-                        Log.e("VolleyError", "Error: " + error.getMessage());
-                        if (error.networkResponse != null) {
-                            String response = new String(error.networkResponse.data);
-                            Log.e("VolleyError", "Response: " + response);
-                        }
+                error -> {
+                    Log.e("VolleyError", "Error during GET request: " + error.getMessage());
+                    if (error.networkResponse != null) {
+                        String response = new String(error.networkResponse.data);
+                        Log.e("VolleyError", "Response: " + response);
                     }
                 });
 
         Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
 
-    // Method to send POST request when toggle state changes
-    private void sendValveStateChange(String url) {
-        // Prepare payload with current valve states
-        JSONObject payload = new JSONObject();
-        try {
-            payload.put("mainvalve", tbtn_mainvalve.isChecked() ? "On" : "Off");
-            payload.put("overheadvalve", tbtn_overheadvalve.isChecked() ? "On" : "Off");
-        } catch (Exception e) {
-            Log.e("JSONException", "Error creating JSON payload: " + e.getMessage());
-            e.printStackTrace();
-        }
+    private void openHistory()
+    {
+        Intent intent = new Intent(LiveData.this, HistoricalData.class);
+        startActivity(intent);
+    }
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(
-                Request.Method.POST, url, payload,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("VolleyResponse", "Valve state update successful: " + response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(com.android.volley.VolleyError error) {
-                        Log.e("VolleyError", "Error: " + error.getMessage());
-                        if (error.networkResponse != null) {
-                            String response = new String(error.networkResponse.data);
-                            Log.e("VolleyError", "Response: " + response);
-                        }
-                    }
-                });
-
-        // Add the request to the Volley queue
-        Volley.newRequestQueue(this).add(postRequest);
+    private void openMenu()
+    {
+        Intent intent = new Intent(LiveData.this, Menu.class);
+        startActivity(intent);
     }
 
     @Override

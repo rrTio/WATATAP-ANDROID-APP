@@ -6,6 +6,7 @@
     <string name="btn_On">On</string>
     <string name="btn_Off">Off</string>
     <string name="btn_Settings">Settings</string>
+    <string name="lbl_act_settings">SETTINGS</string>
 
     <string name="txt_live_data_header">LIVE DATA</string>
     <string name="txt_ph_level">pH Level</string>
@@ -19,4 +20,6 @@
     <string name="btn_overheadvalve">Overhead Valve</string>
     <string name="txt_city">City</string>
     <string name="txt_barangay">Barangay</string>
+    <string name="txt_setthreshold">SET THRESHOLD</string>
+    <string name="btn_save">SAVE THRESHOLD</string>
 </resources>

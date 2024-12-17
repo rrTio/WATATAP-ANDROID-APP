@@ -21,6 +21,7 @@
         tools:ignore="MissingConstraints"/>
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_history"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:text="@string/btn_ViewHistory"
@@ -51,11 +52,13 @@
         tools:ignore="MissingConstraints"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainLiveData"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="25px"
-        app:layout_constraintWidth_percent="0.95"
-        app:layout_constraintHeight_percent="0.75"
+
+        app:layout_constraintWidth_percent="0.96"
+        app:layout_constraintHeight_percent="0.80"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/livedataheader"
@@ -71,7 +74,7 @@
             android:textColor="@color/black"
             android:background="@drawable/live_data"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -85,7 +88,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             tools:ignore="MissingConstraints"/>
 
         <TextView
@@ -99,7 +102,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_phlevel"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -113,7 +116,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_value_phlevel"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -128,7 +131,7 @@
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/txt_turbidity"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -142,7 +145,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_value_turbidity"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -157,7 +160,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_waterconsumption"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -171,7 +174,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_value_waterconsumption"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -186,7 +189,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_waterlevelthreshold"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -200,7 +203,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_value_waterlevelthreshold"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -215,7 +218,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_leakageamount_a"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -229,7 +232,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_value_leakageamount_a"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -244,7 +247,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_leakageamount_b"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -258,7 +261,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_value_leakageamount_b"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -273,7 +276,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_liters"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -282,7 +285,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txt_value_liters"
             android:background="@drawable/live_data_background"
@@ -299,7 +302,7 @@
             android:background="@drawable/live_data"
             app:layout_constraintTop_toBottomOf="@id/txt_city"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
 
@@ -308,10 +311,55 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sp_city"
             android:background="@drawable/live_data_background"
+            tools:ignore="MissingConstraints"/>
+
+        <TextView
+            android:id="@+id/spacer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="1"
+            app:layout_constraintHeight_percent="0.065"
+            app:layout_constraintTop_toBottomOf="@id/txt_barangay"
+            tools:ignore="MissingConstraints"/>
+
+        <TextView
+            android:id="@+id/txt_setthreshold"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/txt_setthreshold"
+            android:gravity="right|center_vertical"
+            android:autoSizeTextType="uniform"
+            android:textColor="@color/black"
+            android:background="@drawable/live_data"
+            app:layout_constraintTop_toBottomOf="@id/spacer"
+            app:layout_constraintWidth_percent="0.5"
+            app:layout_constraintHeight_percent="0.065"
+            app:layout_constraintLeft_toLeftOf="parent"
+            tools:ignore="MissingConstraints"/>
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:autoSizeTextType="uniform"
+            android:textColor="@color/black"
+            android:background="@drawable/live_data"
+            app:layout_constraintTop_toBottomOf="@id/spacer"
+            app:layout_constraintWidth_percent="0.5"
+            app:layout_constraintHeight_percent="0.065"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:ignore="MissingConstraints"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/txt_setthreshold"
+            app:layout_constraintWidth_percent="1"
+            app:layout_constraintHeight_percent="0.065"
+            android:text="@string/btn_save"
             tools:ignore="MissingConstraints"/>
 
         <TextView
@@ -325,7 +373,7 @@
             android:background="@drawable/live_data"
             android:layout_marginTop="75px"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintBottom_toTopOf="@id/mainvalve_switch"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints"/>
@@ -353,7 +401,7 @@
             android:layout_marginTop="75px"
             app:layout_constraintBottom_toTopOf="@id/overheadvalve_switch"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintHeight_percent="0.0833"
+            app:layout_constraintHeight_percent="0.065"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="MissingConstraints"/>
